@@ -25,7 +25,9 @@ BridgeGuard AI's current scope is a showcase/prototype (see project scope-lock d
 
 **D/E. Condition & deterioration**: a hidden per-bridge `_latent_quality_factor` (N(0,1), unobserved heterogeneity — construction quality, local conditions not captured by any feature) combines with material decay rate × traffic factor × climate factor into a stress term; condition follows `9·exp(−stress)`. Deck/superstructure/substructure get correlated but distinct values (component offsets + independent noise). Rehab resets the deck's effective age more than the substructure's.
 
-**F. RUL (ground truth only)**: solved analytically as years until the *unrounded* latent trajectory crosses condition ≤ 4, holding the stress-rate constant forward (a documented simplification — real future traffic/climate/decay won't stay constant). Right-censored past 100 years. **Observed result: 0% censored** in this run — with build years 1960–2022 and the current decay-rate ranges, every bridge's projected threshold-crossing age falls under 100 years, so the censoring mechanism exists in the code but didn't trigger on this dataset. Documented honestly rather than re-tuned to force censored cases.
+**F. RUL (ground truth only)**: solved analytically as years until the *unrounded* latent trajectory crosses condition ≤ 4, holding the stress-rate constant forward (a documented simplification — real future traffic/climate/decay won't stay constant).
+
+**Correction (post-validation)**: the first version censored past an arbitrary fixed cap of 100 years, disconnected from the dataset's actual timeframe — with build years 1960–2022 and observation ending 2024 (≤64-year window), almost nothing could ever exceed 100, producing only 0.02% censored. Fixed to the textbook definition: a bridge is right-censored if its projected threshold-crossing year (`year_built + age_at_threshold`) falls **after `CURRENT_YEAR` (2024)**, i.e. it genuinely hasn't reached "poor" by the time we stop observing it. Result: **84.6% of rows / 86.1% of bridges are censored.** This is high but not forced — it falls directly out of `year_built` skewing toward 1990–2022 (most bridges are simply too young to have deteriorated to threshold yet within the observation window). Flagged as a real design tension: realistic for a young/expanding highway network, but it leaves relatively few "observed event" rows (~5,210) for any future RUL model to learn from.
 
 **G. Noise/missing data**: ±1 inspector rating jitter, heteroscedastic noise (older bridges rated less consistently), 5–10% missingness on ADT/ADTT%/climate columns. The latent quality factor is the main defense against unrealistic near-100% model accuracy later — it's real variance no feature can explain.
 
@@ -34,6 +36,11 @@ BridgeGuard AI's current scope is a showcase/prototype (see project scope-lock d
 **I. ML targets** (future phases, not computed here): deck/superstructure/substructure/overall condition are ready now; future condition at t+5/t+10 and predicted RUL will be derived at modeling time using proper temporal splits — not baked into the generator.
 
 **J. Dashboard outputs** (future phases): health score, current + forecasted condition, 5/10/15-yr risk, RUL with interval, SHAP-based risk factors, and a persistent synthetic-data disclaimer banner.
+
+## Validation pass (post-fix)
+Also fixed during validation: `main()`'s merge duplicated `adt`/`adtt_percent`/climate columns into `_x`/`_y` pairs (they were generated in both the per-inspection records and the bridge-static table). Fixed by dropping them from the bridge-static side before merging — single source of truth now.
+
+Checked and clean: 33,806 rows × 30 columns, 4,994 unique bridges (6 of the intended 5,000 produced no valid inspection year and were dropped — a young-bridge edge case, not a bug), 1–10 records/bridge (mean 6.8), no duplicate bridge-year rows, no out-of-range condition values, no negative ages, static fields (state/material/year_built/etc.) provably constant per bridge across years, and condition columns do genuinely vary within a bridge over time (not constant).
 
 ## What this is NOT
 - Not real Indian bridge inspection data

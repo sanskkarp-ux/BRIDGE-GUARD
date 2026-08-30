@@ -191,13 +191,18 @@ def generate_inspections(rng: np.random.Generator, bridges: pd.DataFrame) -> tup
 
             # ground truth: analytic RUL from the *unrounded* latent trajectory, holding k constant.
             # 9*exp(-age*k) = 4  =>  age* = ln(9/4)/k
+            # Censoring is right-censoring relative to the actual observation cutoff (CURRENT_YEAR),
+            # not an arbitrary absolute-age cap -- a bridge is censored if its projected
+            # threshold-crossing year falls after the last year we "observe" any bridge.
             age_at_threshold = np.log(9 / 4) / k
+            year_at_threshold = b["year_built"] + age_at_threshold
             true_rul = age_at_threshold - age
-            censored = true_rul > 100
+            censored = year_at_threshold > CURRENT_YEAR
             gt_records.append({
                 "bridge_id": b["bridge_id"], "inspection_year": y,
                 "latent_quality_factor": b["_latent_quality_factor"],
                 "true_stress_rate_k": k,
+                "year_at_threshold_estimate": round(year_at_threshold, 1),
                 "true_rul_years": None if censored else round(max(true_rul, 0), 1),
                 "rul_censored": bool(censored),
             })
@@ -222,7 +227,10 @@ def main():
     inspections, ground_truth = generate_inspections(rng, bridges)
     inspections = apply_missingness(rng, inspections)
 
-    bridge_static = bridges.drop(columns=["_latent_quality_factor"])
+    bridge_static = bridges.drop(columns=[
+        "_latent_quality_factor", "adt", "adtt_percent", "annual_rainfall_mm",
+        "avg_temp_c", "monsoon_intensity", "flood_risk_score",
+    ])
     modeling_df = inspections.merge(bridge_static, on="bridge_id", how="left")
 
     modeling_path = OUT_DIR / "bridges_synthetic.csv"
