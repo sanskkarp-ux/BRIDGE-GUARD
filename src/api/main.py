@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Optional, Literal
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -16,6 +18,9 @@ from src.pipeline.predict import run_full_prediction, FEATURE_COLS
 
 app = FastAPI(title="BridgeGuard Prototype API",
               description="Synthetic India-inspired prototype -- not a real safety assessment tool.")
+
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "src" / "frontend"
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 VALID_MATERIALS = ["RCC", "PSC", "Steel", "Masonry", "Timber"]
 VALID_STRUCTURE_TYPES = ["Slab", "Girder", "Box", "Truss", "Arch"]
@@ -88,5 +93,10 @@ def predict(bridge: BridgeInput):
 
 @app.get("/")
 def root():
+    return FileResponse(str(FRONTEND_DIR / "index.html"))
+
+
+@app.get("/api")
+def api_info():
     return {"message": "BridgeGuard Prototype API -- synthetic India-inspired prototype. POST /predict.",
             "docs": "/docs"}

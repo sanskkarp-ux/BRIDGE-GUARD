@@ -72,7 +72,7 @@ def _rul_estimate(feature_row: dict) -> dict:
 
     if median is not None:
         reliability = "estimable"
-        rul_text = f"approximately {hi:.0f}-{lo:.0f} years" if (lo is not None and hi is not None) else f"median {median:.0f} years"
+        rul_text = f"approximately {lo:.0f}-{hi:.0f} years" if (lo is not None and hi is not None) else f"median {median:.0f} years"
     else:
         reliability = "not_reached_within_observed_horizon"
         rul_text = "not reliably estimable within the observed horizon"

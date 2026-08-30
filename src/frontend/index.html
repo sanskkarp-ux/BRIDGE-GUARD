@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BridgeGuard AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <h1>BRIDGEGUARD AI</h1>
+      <p class="tagline">Bridge Health &amp; Deterioration Intelligence</p>
+    </div>
+    <span class="badge">SYNTHETIC INDIA-INSPIRED PROTOTYPE</span>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="card input-panel">
+    <h2>Bridge Details</h2>
+    <form id="predict-form">
+
+      <fieldset>
+        <legend>Location &amp; Structure</legend>
+        <label>State
+          <select name="state" required></select>
+        </label>
+        <label>Material
+          <select name="material" required></select>
+        </label>
+        <label>Structure Type
+          <select name="structure_type" required></select>
+        </label>
+        <label>Road Class
+          <select name="road_class" required></select>
+        </label>
+        <label>Exposure Condition
+          <select name="exposure_condition" required></select>
+        </label>
+        <label>Latitude
+          <input type="number" step="0.0001" name="latitude" value="22.5" min="6" max="38" required>
+        </label>
+        <label>Longitude
+          <input type="number" step="0.0001" name="longitude" value="80.0" min="68" max="98" required>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Age &amp; Geometry</legend>
+        <label>Bridge Age (years)
+          <input type="number" name="bridge_age" value="25" min="0" max="150" required>
+        </label>
+        <label>Number of Spans
+          <input type="number" name="num_spans" value="3" min="1" max="50" required>
+        </label>
+        <label>Max Span (m)
+          <input type="number" step="0.1" name="max_span_m" value="20" min="0.1" max="500" required>
+        </label>
+        <label>Total Length (m)
+          <input type="number" step="0.1" name="total_length_m" value="60" min="0.1" max="5000" required>
+        </label>
+        <label>Deck Width (m)
+          <input type="number" step="0.1" name="deck_width_m" value="9" min="0.1" max="60" required>
+        </label>
+        <label>Number of Lanes
+          <input type="number" name="num_lanes" value="2" min="1" max="12" required>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Traffic</legend>
+        <label>Average Daily Traffic (ADT)
+          <input type="number" name="adt" value="5000" min="0" max="200000" required>
+        </label>
+        <label>Heavy Vehicle Traffic (ADTT %)
+          <input type="number" step="0.1" name="adtt_percent" value="12" min="0" max="100" required>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Environment</legend>
+        <label>Annual Rainfall (mm)
+          <input type="number" name="annual_rainfall_mm" value="1500" min="0" max="6000" required>
+        </label>
+        <label>Average Temperature (&deg;C)
+          <input type="number" step="0.1" name="avg_temp_c" value="27" min="-10" max="55" required>
+        </label>
+        <label>Monsoon Intensity (0-1)
+          <input type="number" step="0.01" name="monsoon_intensity" value="0.5" min="0" max="1" required>
+        </label>
+        <label>Flood / Scour Exposure (0-1)
+          <input type="number" step="0.01" name="flood_risk_score" value="0.4" min="0" max="1" required>
+          <small>No dedicated scour field exists in the underlying data; this proxy covers both (see docs/synthetic_data.md).</small>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Rehabilitation</legend>
+        <label class="checkbox">
+          <input type="checkbox" name="ever_rehabilitated">
+          Ever rehabilitated
+        </label>
+        <label>Years Since Rehabilitation (leave blank if never / unknown)
+          <input type="number" name="years_since_rehab" min="0" max="150">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Inspection History <small>(optional -- leave blank if unknown; a first-inspection bridge legitimately has none of this)</small></legend>
+        <label>Previous Deck Condition (0-9)
+          <input type="number" name="prev_deck_condition" min="0" max="9">
+        </label>
+        <label>Previous Superstructure Condition (0-9)
+          <input type="number" name="prev_superstructure_condition" min="0" max="9">
+        </label>
+        <label>Previous Substructure Condition (0-9)
+          <input type="number" name="prev_substructure_condition" min="0" max="9">
+        </label>
+        <label>Previous Overall Condition (0-9)
+          <input type="number" name="prev_overall_condition" min="0" max="9">
+        </label>
+        <label>Recent Condition Trend
+          <input type="number" step="0.1" name="overall_condition_trend" min="-9" max="9">
+        </label>
+        <label>Number of Previous Inspections
+          <input type="number" name="num_previous_inspections" min="0">
+        </label>
+        <label>Years Since First Inspection
+          <input type="number" name="years_since_first_inspection" min="0">
+        </label>
+        <label>Historical Deterioration Rate
+          <input type="number" step="0.01" name="historical_deterioration_rate">
+        </label>
+      </fieldset>
+
+      <button type="submit" id="analyze-btn">ANALYZE BRIDGE</button>
+    </form>
+  </section>
+
+  <section class="results-panel">
+    <div id="status-area"></div>
+
+    <div id="results" class="results hidden">
+      <div class="card score-card">
+        <h2>Health Score</h2>
+        <div class="score-row">
+          <div class="score-circle" id="score-circle">
+            <span id="score-value">--</span>
+          </div>
+          <div class="score-meta">
+            <div class="category-badge" id="category-badge">--</div>
+            <div class="confidence-line">Confidence: <span id="confidence-value">--</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Condition Forecast</h2>
+        <div class="forecast-numbers">
+          <div><span class="label">Current</span><span class="value" id="current-condition">--</span></div>
+          <div><span class="label">+5 Years</span><span class="value" id="pred-5yr">--</span></div>
+          <div><span class="label">+10 Years</span><span class="value" id="pred-10yr">--</span></div>
+        </div>
+        <svg id="forecast-chart" width="100%" height="160" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <div class="card">
+        <h2>Remaining Useful Life (RUL)</h2>
+        <div id="rul-content"></div>
+      </div>
+
+      <div class="card">
+        <h2>Risk Factors</h2>
+        <ul id="risk-factors-list"></ul>
+      </div>
+
+      <div class="card">
+        <h2>Why This Prediction?</h2>
+        <pre id="shap-explanation"></pre>
+      </div>
+
+      <div class="card">
+        <h2>Model Summary</h2>
+        <table id="model-summary-table"></table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="disclaimer">
+  <p><strong>Synthetic India-inspired data &mdash; prototype demonstration only.</strong></p>
+  <p>Not a certified structural safety rating and does not replace professional bridge inspection.</p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
