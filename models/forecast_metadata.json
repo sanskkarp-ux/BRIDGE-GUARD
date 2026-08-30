@@ -1,0 +1,308 @@
+{
+  "disclaimer": "Synthetic India-inspired dataset; model performance is a prototype demonstration and is not evidence of real-world Indian bridge prediction accuracy.",
+  "seed": 42,
+  "feature_list": [
+    "state",
+    "material",
+    "structure_type",
+    "road_class",
+    "exposure_condition",
+    "bridge_age",
+    "years_since_rehab_filled",
+    "adt",
+    "adtt_percent",
+    "heavy_vehicle_traffic",
+    "annual_rainfall_mm",
+    "avg_temp_c",
+    "monsoon_intensity",
+    "flood_risk_score",
+    "num_spans",
+    "max_span_m",
+    "total_length_m",
+    "deck_width_m",
+    "num_lanes",
+    "latitude",
+    "longitude",
+    "prev_deck_condition",
+    "prev_superstructure_condition",
+    "prev_substructure_condition",
+    "prev_overall_condition",
+    "overall_condition_trend",
+    "num_previous_inspections",
+    "years_since_first_inspection",
+    "historical_deterioration_rate",
+    "ever_rehabilitated"
+  ],
+  "train_years": "<= 2019",
+  "val_years": "2020-2021",
+  "test_years": "> 2021",
+  "plus5": {
+    "horizon": "plus5",
+    "best_model": "GradientBoosting",
+    "n_train": 14193,
+    "n_val": 5614,
+    "n_test": 4060,
+    "results": {
+      "MedianBaseline": {
+        "train": {
+          "MAE": 1.2400479109420137,
+          "RMSE": 1.7679836602146188,
+          "ExactAcc": 0.26942859155921933,
+          "Within1Acc": 0.726766715986754
+        },
+        "val": {
+          "MAE": 1.2625578909868187,
+          "RMSE": 1.8259694927705332,
+          "ExactAcc": 0.27983612397577484,
+          "Within1Acc": 0.7173138582116139
+        },
+        "test": {
+          "MAE": 1.2891625615763547,
+          "RMSE": 1.861457662838957,
+          "ExactAcc": 0.2876847290640394,
+          "Within1Acc": 0.6977832512315271
+        }
+      },
+      "Ridge": {
+        "train": {
+          "MAE": 0.47734269165206933,
+          "RMSE": 0.6026713630721302,
+          "ExactAcc": 0.602480095821884,
+          "Within1Acc": 0.9854858028605651
+        },
+        "val": {
+          "MAE": 0.4807244655361572,
+          "RMSE": 0.6066082046434016,
+          "ExactAcc": 0.6045600285001781,
+          "Within1Acc": 0.9852155325970787
+        },
+        "test": {
+          "MAE": 0.49190211682050117,
+          "RMSE": 0.6211315469900215,
+          "ExactAcc": 0.5886699507389163,
+          "Within1Acc": 0.982512315270936
+        }
+      },
+      "RandomForest": {
+        "train": {
+          "MAE": 0.367638309870699,
+          "RMSE": 0.46363945044407917,
+          "ExactAcc": 0.7240893398154019,
+          "Within1Acc": 0.9980271965053196
+        },
+        "val": {
+          "MAE": 0.4392837949641898,
+          "RMSE": 0.5524149507248923,
+          "ExactAcc": 0.6382258639116495,
+          "Within1Acc": 0.991449946562166
+        },
+        "test": {
+          "MAE": 0.45700304209252807,
+          "RMSE": 0.5725588833136414,
+          "ExactAcc": 0.6088669950738916,
+          "Within1Acc": 0.9891625615763546
+        }
+      },
+      "GradientBoosting": {
+        "train": {
+          "MAE": 0.4169805977209646,
+          "RMSE": 0.5226238569972094,
+          "ExactAcc": 0.6617346579299654,
+          "Within1Acc": 0.9952089057986331
+        },
+        "val": {
+          "MAE": 0.43070104466172915,
+          "RMSE": 0.5378122312074535,
+          "ExactAcc": 0.6482009262557891,
+          "Within1Acc": 0.9939437121482009
+        },
+        "test": {
+          "MAE": 0.44676242604490407,
+          "RMSE": 0.5579186975865573,
+          "ExactAcc": 0.6270935960591133,
+          "Within1Acc": 0.9911330049261083
+        }
+      }
+    },
+    "top_importances": [
+      [
+        "cat__material_Timber",
+        0.5153860639011818
+      ],
+      [
+        "num__bridge_age",
+        0.271070927764948
+      ],
+      [
+        "num__prev_overall_condition",
+        0.046204265257582484
+      ],
+      [
+        "num__prev_substructure_condition",
+        0.040400620250989935
+      ],
+      [
+        "num__prev_superstructure_condition",
+        0.0342395182888795
+      ],
+      [
+        "num__years_since_rehab_filled",
+        0.02771244777935003
+      ],
+      [
+        "cat__material_Steel",
+        0.012299207528944511
+      ],
+      [
+        "cat__structure_type_Arch",
+        0.010291217663561059
+      ],
+      [
+        "cat__material_Masonry",
+        0.006906719526405235
+      ],
+      [
+        "num__annual_rainfall_mm",
+        0.006010880981380619
+      ]
+    ]
+  },
+  "plus10": {
+    "horizon": "plus10",
+    "best_model": "GradientBoosting",
+    "n_train": 10560,
+    "n_val": 3633,
+    "n_test": 2357,
+    "results": {
+      "MedianBaseline": {
+        "train": {
+          "MAE": 1.2234848484848484,
+          "RMSE": 1.8255343758953864,
+          "ExactAcc": 0.3090909090909091,
+          "Within1Acc": 0.7482007575757575
+        },
+        "val": {
+          "MAE": 1.288466831819433,
+          "RMSE": 1.901438747136212,
+          "ExactAcc": 0.3011285439031104,
+          "Within1Acc": 0.7112579135700523
+        },
+        "test": {
+          "MAE": 1.2634705133644464,
+          "RMSE": 1.8556293281926501,
+          "ExactAcc": 0.30420025456088245,
+          "Within1Acc": 0.7136190072125583
+        }
+      },
+      "Ridge": {
+        "train": {
+          "MAE": 0.4779728428739001,
+          "RMSE": 0.6035183086509046,
+          "ExactAcc": 0.6044507575757576,
+          "Within1Acc": 0.9858901515151515
+        },
+        "val": {
+          "MAE": 0.4966272299838111,
+          "RMSE": 0.6268133627412878,
+          "ExactAcc": 0.5835397742912194,
+          "Within1Acc": 0.9810074318744839
+        },
+        "test": {
+          "MAE": 0.5185462762085605,
+          "RMSE": 0.6514951396178762,
+          "ExactAcc": 0.5685193042002545,
+          "Within1Acc": 0.9804836656767076
+        }
+      },
+      "RandomForest": {
+        "train": {
+          "MAE": 0.35319675774380926,
+          "RMSE": 0.4555002211967463,
+          "ExactAcc": 0.7298295454545455,
+          "Within1Acc": 0.9978219696969697
+        },
+        "val": {
+          "MAE": 0.45263741040154154,
+          "RMSE": 0.5765330886773835,
+          "ExactAcc": 0.6176713459950454,
+          "Within1Acc": 0.9892650701899257
+        },
+        "test": {
+          "MAE": 0.465186870617777,
+          "RMSE": 0.5920694229374354,
+          "ExactAcc": 0.6033092914722105,
+          "Within1Acc": 0.9876962240135766
+        }
+      },
+      "GradientBoosting": {
+        "train": {
+          "MAE": 0.4179581901365975,
+          "RMSE": 0.5288836986121067,
+          "ExactAcc": 0.6621212121212121,
+          "Within1Acc": 0.9943181818181818
+        },
+        "val": {
+          "MAE": 0.4479030121436429,
+          "RMSE": 0.5616169538987251,
+          "ExactAcc": 0.6295072942471787,
+          "Within1Acc": 0.9914671070740435
+        },
+        "test": {
+          "MAE": 0.46365317763707314,
+          "RMSE": 0.5800215792211288,
+          "ExactAcc": 0.6054306321595249,
+          "Within1Acc": 0.9893932965634281
+        }
+      }
+    },
+    "top_importances": [
+      [
+        "cat__material_Timber",
+        0.550533235563099
+      ],
+      [
+        "num__bridge_age",
+        0.2314200180138405
+      ],
+      [
+        "num__prev_substructure_condition",
+        0.03879076173975269
+      ],
+      [
+        "num__prev_overall_condition",
+        0.035137386755714414
+      ],
+      [
+        "num__years_since_rehab_filled",
+        0.028456846667094828
+      ],
+      [
+        "num__prev_superstructure_condition",
+        0.023192034597309105
+      ],
+      [
+        "cat__material_Steel",
+        0.018297790389783436
+      ],
+      [
+        "cat__material_Masonry",
+        0.016966294941094855
+      ],
+      [
+        "cat__structure_type_Arch",
+        0.010287307454258059
+      ],
+      [
+        "num__annual_rainfall_mm",
+        0.0076431678795023566
+      ]
+    ]
+  },
+  "package_versions": {
+    "python": "3.12.10",
+    "sklearn": "1.8.0",
+    "pandas": "2.3.3",
+    "numpy": "2.4.1",
+    "xgboost": "not installed"
+  }
+}
