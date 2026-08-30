@@ -65,13 +65,19 @@ Additionally, SNBI introduces separately-rated bearings, joints, and railings th
 **Risk context**
 - Item 113 — Scour critical indicator
 
-### Target variable definition
-NBI has **no single "overall condition" field** in the legacy scheme. FHWA's own condition-measure computation (FHWA-HIF-18-023) uses the **minimum of deck, superstructure, and substructure** ratings as the basis for "poor" classification — we adopt that same convention for our "overall condition" derived target rather than inventing a new one.
+### Target variable definition — CORRECTED after pilot inspection (Phase 2)
+Phase 1 stated NBI has no single "overall condition" field and proposed deriving one as min(deck, superstructure, substructure). Pulling the real Delaware 2023 delimited file (`src/data/nbi_inspect.py`) showed this was half right: the raw legacy *item numbers* (58/59/60) indeed have no such field, but **FHWA's own delimited export already includes two derived columns we didn't know about**:
+- `BRIDGE_CONDITION` — categorical, values seen in Delaware 2023: `G` (Good), `F` (Fair), `P` (Poor)
+- `LOWEST_RATING` — numeric, and verified on all 671 non-culvert Delaware bridges to equal exactly `min(DECK_COND_058, SUPERSTRUCTURE_COND_059, SUBSTRUCTURE_COND_060)` with **zero mismatches**.
+
+This confirms our planned "min of three" convention is exactly what FHWA itself computes — but we should use FHWA's own `LOWEST_RATING`/`BRIDGE_CONDITION` columns directly where present, rather than recomputing, since it's already validated by the source. Still need to confirm both columns are present across other states/years before relying on them universally (some older-year files may predate these convenience columns being added).
 
 ### Missing-value concerns
 - Column fill rates vary by state and by year — some states have historically left optional items sparse. This must be measured empirically per state/year during the pilot, not assumed.
 - Item 106 (year reconstructed) is 0 or blank for bridges that have never been reconstructed — this is a legitimate "no rehab" signal, not a missing value, and must not be imputed as if it were.
 - Culvert-type structures have Item 62 populated and Items 58/59/60 coded "N" (not applicable) — these records need a separate handling path, not row-wise deletion.
+- **Verified in Delaware 2023 pilot**: 203 of 874 bridges are culvert-type (`CULVERT_COND_062` is a digit, not "N"). `DECK_COND_058` is "N" for 222 rows — close to but not exactly the culvert count, meaning "N" in deck condition isn't purely a culvert artifact; the remaining ~19 rows need investigation once we're doing the full leakage/missingness audit, not assumed to be the same cause.
+- **Verified**: 686 of 874 Delaware bridges have `YEAR_RECONSTRUCTED_106 == 0`, confirming this is the standard "never reconstructed" code, not sparse/missing data — matches the concern raised above and should be treated as a real category (e.g., a boolean `ever_reconstructed` flag) rather than imputed.
 
 ### Potential leakage
 See `docs/data_leakage.md` for full treatment. Summary: Item 106 must be truncated at the prediction cutoff year; scour critical updates may co-occur with condition rating updates in the same inspection cycle; state-level methodology changes can look like deterioration signal but are actually reporting artifacts.
