@@ -8,37 +8,37 @@
 </head>
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <div>
-      <h1>BRIDGEGUARD AI</h1>
-      <p class="tagline">Bridge Health &amp; Deterioration Intelligence</p>
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="brand">
+      <span class="brand-name">BRIDGEGUARD<span class="brand-ai">AI</span></span>
+      <span class="tagline">Bridge Health &amp; Deterioration Intelligence</span>
     </div>
-    <span class="badge">SYNTHETIC INDIA-INSPIRED PROTOTYPE</span>
+    <div class="navbar-right">
+      <span class="status-pill"><span class="status-dot"></span>SYSTEM READY</span>
+      <span class="badge">SYNTHETIC INDIA-INSPIRED PROTOTYPE</span>
+    </div>
   </div>
 </header>
 
-<main class="layout">
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">AI-POWERED</p>
+    <h1 class="hero-title">BRIDGE HEALTH INTELLIGENCE</h1>
+    <p class="hero-sub">Predict condition. Forecast deterioration. Estimate remaining useful life.</p>
+    <a href="#analyze" class="hero-cta">ANALYZE BRIDGE <span aria-hidden="true">&rarr;</span></a>
+  </div>
+</section>
+
+<main class="layout" id="analyze">
   <section class="card input-panel">
     <h2>Bridge Details</h2>
     <form id="predict-form">
 
       <fieldset>
-        <legend>Location &amp; Structure</legend>
+        <legend><span class="legend-icon">&#128205;</span>Bridge Identity</legend>
         <label>State
           <select name="state" required></select>
-        </label>
-        <label>Material
-          <select name="material" required></select>
-        </label>
-        <label>Structure Type
-          <select name="structure_type" required></select>
-        </label>
-        <label>Road Class
-          <select name="road_class" required></select>
-        </label>
-        <label>Exposure Condition
-          <select name="exposure_condition" required></select>
         </label>
         <label>Latitude
           <input type="number" step="0.0001" name="latitude" value="22.5" min="6" max="38" required>
@@ -49,7 +49,16 @@
       </fieldset>
 
       <fieldset>
-        <legend>Age &amp; Geometry</legend>
+        <legend><span class="legend-icon">&#127959;&#65039;</span>Structural Profile</legend>
+        <label>Material
+          <select name="material" required></select>
+        </label>
+        <label>Structure Type
+          <select name="structure_type" required></select>
+        </label>
+        <label>Road Class
+          <select name="road_class" required></select>
+        </label>
         <label>Bridge Age (years)
           <input type="number" name="bridge_age" value="25" min="0" max="150" required>
         </label>
@@ -71,7 +80,7 @@
       </fieldset>
 
       <fieldset>
-        <legend>Traffic</legend>
+        <legend><span class="legend-icon">&#128663;</span>Traffic &amp; Load</legend>
         <label>Average Daily Traffic (ADT)
           <input type="number" name="adt" value="5000" min="0" max="200000" required>
         </label>
@@ -81,7 +90,10 @@
       </fieldset>
 
       <fieldset>
-        <legend>Environment</legend>
+        <legend><span class="legend-icon">&#127783;&#65039;</span>Environment</legend>
+        <label>Exposure Condition
+          <select name="exposure_condition" required></select>
+        </label>
         <label>Annual Rainfall (mm)
           <input type="number" name="annual_rainfall_mm" value="1500" min="0" max="6000" required>
         </label>
@@ -93,23 +105,23 @@
         </label>
         <label>Flood / Scour Exposure (0-1)
           <input type="number" step="0.01" name="flood_risk_score" value="0.4" min="0" max="1" required>
-          <small>No dedicated scour field exists in the underlying data; this proxy covers both (see docs/synthetic_data.md).</small>
+          <small>No dedicated scour field exists in the underlying data; this proxy covers both.</small>
         </label>
       </fieldset>
 
       <fieldset>
-        <legend>Rehabilitation</legend>
+        <legend><span class="legend-icon">&#128295;</span>Maintenance</legend>
         <label class="checkbox">
           <input type="checkbox" name="ever_rehabilitated">
           Ever rehabilitated
         </label>
-        <label>Years Since Rehabilitation (leave blank if never / unknown)
+        <label>Years Since Rehabilitation <small>(blank if never / unknown)</small>
           <input type="number" name="years_since_rehab" min="0" max="150">
         </label>
       </fieldset>
 
       <fieldset>
-        <legend>Inspection History <small>(optional -- leave blank if unknown; a first-inspection bridge legitimately has none of this)</small></legend>
+        <legend><span class="legend-icon">&#128203;</span>Inspection History <small>(optional)</small></legend>
         <label>Previous Deck Condition (0-9)
           <input type="number" name="prev_deck_condition" min="0" max="9">
         </label>
@@ -144,55 +156,87 @@
     <div id="status-area"></div>
 
     <div id="results" class="results hidden">
-      <div class="card score-card">
-        <h2>Health Score</h2>
+
+      <div class="card score-card reveal">
         <div class="score-row">
-          <div class="score-circle" id="score-circle">
-            <span id="score-value">--</span>
+          <div class="score-ring-wrap">
+            <div class="score-ring" id="score-circle">
+              <div class="score-ring-inner">
+                <span id="score-value">0</span>
+                <span class="score-max">/100</span>
+              </div>
+            </div>
           </div>
           <div class="score-meta">
             <div class="category-badge" id="category-badge">--</div>
-            <div class="confidence-line">Confidence: <span id="confidence-value">--</span></div>
+            <div class="confidence-badge" id="confidence-badge">--</div>
           </div>
         </div>
       </div>
 
-      <div class="card">
+      <div class="card reveal">
         <h2>Condition Forecast</h2>
         <div class="forecast-numbers">
-          <div><span class="label">Current</span><span class="value" id="current-condition">--</span></div>
+          <div><span class="label">Now</span><span class="value" id="current-condition">--</span></div>
           <div><span class="label">+5 Years</span><span class="value" id="pred-5yr">--</span></div>
           <div><span class="label">+10 Years</span><span class="value" id="pred-10yr">--</span></div>
         </div>
-        <svg id="forecast-chart" width="100%" height="160" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="forecast-chart" width="100%" height="170" viewBox="0 0 400 170" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
 
-      <div class="card">
-        <h2>Remaining Useful Life (RUL)</h2>
-        <div id="rul-content"></div>
+      <div class="card-grid">
+        <div class="card reveal">
+          <h2>Remaining Useful Life</h2>
+          <div id="rul-content"></div>
+        </div>
+
+        <div class="card reveal">
+          <h2>10-Year Survival Probability</h2>
+          <div class="survival-row">
+            <div class="survival-ring" id="survival-ring">
+              <span id="survival-value">--</span>
+            </div>
+            <p class="survival-caption">Probability this bridge has not yet reached the poor-condition threshold 10 years from now, per the Weibull-AFT survival model.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
+      <div class="card reveal">
         <h2>Risk Factors</h2>
-        <ul id="risk-factors-list"></ul>
+        <div id="risk-bars"></div>
       </div>
 
-      <div class="card">
+      <div class="card reveal">
         <h2>Why This Prediction?</h2>
-        <pre id="shap-explanation"></pre>
+        <div class="shap-columns">
+          <div class="shap-col shap-up">
+            <h3>&uarr; Risk Reducing</h3>
+            <ul id="shap-up-list"></ul>
+          </div>
+          <div class="shap-col shap-down">
+            <h3>&darr; Risk Increasing</h3>
+            <ul id="shap-down-list"></ul>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2>Model Summary</h2>
+      <details class="card model-insights">
+        <summary>MODEL INSIGHTS <span class="chev">&#9662;</span></summary>
         <table id="model-summary-table"></table>
-      </div>
+      </details>
+
     </div>
   </section>
 </main>
 
-<footer class="disclaimer">
+<div class="disclaimer-banner">
   <p><strong>Synthetic India-inspired data &mdash; prototype demonstration only.</strong></p>
   <p>Not a certified structural safety rating and does not replace professional bridge inspection.</p>
+</div>
+
+<footer class="footer">
+  <p class="footer-brand">BRIDGEGUARD AI</p>
+  <p class="footer-line">Prototype &bull; Synthetic Data &bull; Research Demonstration</p>
 </footer>
 
 <script src="/static/app.js"></script>
