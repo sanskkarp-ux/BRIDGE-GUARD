@@ -1,0 +1,130 @@
+{
+  "disclaimer": "Synthetic India-inspired dataset; model performance is a prototype demonstration and is not evidence of real-world Indian bridge prediction accuracy.",
+  "seed": 42,
+  "target": "target_current_overall_condition",
+  "feature_list": [
+    "state",
+    "material",
+    "structure_type",
+    "road_class",
+    "exposure_condition",
+    "bridge_age",
+    "years_since_rehab_filled",
+    "adt",
+    "adtt_percent",
+    "heavy_vehicle_traffic",
+    "annual_rainfall_mm",
+    "avg_temp_c",
+    "monsoon_intensity",
+    "flood_risk_score",
+    "num_spans",
+    "max_span_m",
+    "total_length_m",
+    "deck_width_m",
+    "num_lanes",
+    "latitude",
+    "longitude",
+    "prev_deck_condition",
+    "prev_superstructure_condition",
+    "prev_substructure_condition",
+    "prev_overall_condition",
+    "overall_condition_trend",
+    "num_previous_inspections",
+    "years_since_first_inspection",
+    "historical_deterioration_rate",
+    "ever_rehabilitated"
+  ],
+  "train_years": "<= 2019",
+  "val_years": "2020-2021",
+  "test_years": "> 2021",
+  "best_model": "GradientBoosting",
+  "metrics": {
+    "MedianBaseline": {
+      "train": {
+        "MAE": 1.3421516015428476,
+        "RMSE": 1.7976986984561654,
+        "ExactAcc": 0.23079825591145398,
+        "Within1Acc": 0.6421264464195875
+      },
+      "val": {
+        "MAE": 1.287915262397689,
+        "RMSE": 1.8251704004974962,
+        "ExactAcc": 0.2691381800674049,
+        "Within1Acc": 0.6935483870967742
+      },
+      "test": {
+        "MAE": 1.305344827586207,
+        "RMSE": 1.8754769508323605,
+        "ExactAcc": 0.2810344827586207,
+        "Within1Acc": 0.6884482758620689
+      }
+    },
+    "Ridge": {
+      "train": {
+        "MAE": 0.4579748803967099,
+        "RMSE": 0.5868116039338895,
+        "ExactAcc": 0.6280815025993627,
+        "Within1Acc": 0.9862485326178099
+      },
+      "val": {
+        "MAE": 0.46468333422112773,
+        "RMSE": 0.589282777302522,
+        "ExactAcc": 0.6198844487241213,
+        "Within1Acc": 0.9862782859894078
+      },
+      "test": {
+        "MAE": 0.4866292614481836,
+        "RMSE": 0.6173835704130614,
+        "ExactAcc": 0.6060344827586207,
+        "Within1Acc": 0.9805172413793104
+      }
+    },
+    "RandomForest": {
+      "train": {
+        "MAE": 0.349899728864001,
+        "RMSE": 0.4458989654452399,
+        "ExactAcc": 0.7318044608418581,
+        "Within1Acc": 0.9990776454804629
+      },
+      "val": {
+        "MAE": 0.3960055589605515,
+        "RMSE": 0.5054759761274916,
+        "ExactAcc": 0.6795859412614348,
+        "Within1Acc": 0.9961482908040443
+      },
+      "test": {
+        "MAE": 0.41462159163469275,
+        "RMSE": 0.522991013048539,
+        "ExactAcc": 0.6598275862068965,
+        "Within1Acc": 0.993448275862069
+      }
+    },
+    "GradientBoosting": {
+      "train": {
+        "MAE": 0.38782889743351745,
+        "RMSE": 0.4859238128168876,
+        "ExactAcc": 0.6936105986919336,
+        "Within1Acc": 0.9974844876739896
+      },
+      "val": {
+        "MAE": 0.3888845372844447,
+        "RMSE": 0.4898020820274662,
+        "ExactAcc": 0.7002888781896967,
+        "Within1Acc": 0.996870486278286
+      },
+      "test": {
+        "MAE": 0.40458575854928697,
+        "RMSE": 0.5056035590830603,
+        "ExactAcc": 0.6772413793103448,
+        "Within1Acc": 0.9967241379310345
+      }
+    }
+  },
+  "package_versions": {
+    "python": "3.12.10",
+    "sklearn": "1.8.0",
+    "pandas": "2.3.3",
+    "numpy": "2.4.1",
+    "xgboost": "not installed"
+  }
+}
