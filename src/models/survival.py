@@ -69,6 +69,22 @@ def build_survival_dataset(raw: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+_population_fit_stats_cache = None
+
+
+def get_population_fit_stats() -> dict:
+    """Shared helper (used by health_score.py and src/pipeline/predict.py) so
+    normalization-stat recomputation isn't duplicated across callers. Does NOT
+    retrain any model -- only recomputes the mean/median/std used to scale a
+    new bridge's covariates before feeding them to the already-fitted AFT model."""
+    global _population_fit_stats_cache
+    if _population_fit_stats_cache is None:
+        raw = pd.read_csv(SYNTH_DIR / "bridges_synthetic.csv")
+        surv = build_survival_dataset(raw)
+        _, _population_fit_stats_cache = encode_covariates(surv)
+    return _population_fit_stats_cache
+
+
 def encode_covariates(df: pd.DataFrame, fit_stats: dict = None):
     """One-hot encode categoricals, standardize numerics. fit_stats=None
     means fit (train); passing train's fit_stats applies the same

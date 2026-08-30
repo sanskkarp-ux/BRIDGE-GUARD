@@ -15,7 +15,8 @@ from joblib import load
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.models.survival import (
-    build_survival_dataset, encode_covariates, STATIC_NUMERIC, STATIC_CATEGORICAL, STATIC_BOOL,
+    build_survival_dataset, encode_covariates, get_population_fit_stats,
+    STATIC_NUMERIC, STATIC_CATEGORICAL, STATIC_BOOL,
 )
 from src.features.feature_engineering import SYNTH_DIR
 
@@ -123,9 +124,7 @@ def get_survival_10yr_probability(bridge_row: dict) -> float:
     from the full population (see docs/health_score.md for why this is a
     documented, negligible approximation vs. the exact original train-only
     stats, not a retrain)."""
-    raw = pd.read_csv(SYNTH_DIR / "bridges_synthetic.csv")
-    surv = build_survival_dataset(raw)
-    _, fit_stats = encode_covariates(surv)
+    fit_stats = get_population_fit_stats()
 
     row_df = pd.DataFrame([bridge_row])
     row_df["duration"] = 0.5  # placeholder, unused by predict_survival_function; required by encode_covariates
