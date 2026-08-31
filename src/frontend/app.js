@@ -25,13 +25,19 @@ function populateSelects() {
   }
 }
 
-function setStatus(kind, message) {
+function setStatus(kind, message, onRetry) {
   const area = document.getElementById("status-area");
   if (!message) { area.innerHTML = ""; return; }
   if (kind === "loading") {
-    area.innerHTML = `<div class="status-msg status-loading"><span class="spinner"></span>${message}</div>`;
+    area.innerHTML = `<div class="status-msg status-loading"><span class="spinner"></span><span id="loading-text">${message}</span></div>`;
   } else {
-    area.innerHTML = `<div class="status-msg status-error">${message}</div>`;
+    area.innerHTML = `<div class="status-msg status-error">
+      <span class="error-icon" aria-hidden="true">&#9888;&#65039;</span>
+      <span class="error-text"><strong>ANALYSIS UNAVAILABLE</strong>BridgeGuard could not complete this analysis. ${message}</span>
+      <button type="button" class="retry-btn">TRY AGAIN</button>
+    </div>`;
+    const retryBtn = area.querySelector(".retry-btn");
+    if (retryBtn && onRetry) retryBtn.addEventListener("click", onRetry);
   }
 }
 
@@ -157,6 +163,11 @@ function renderRUL(estimate, flag) {
   }
 
   el.innerHTML = `${body}<div style="margin-top:8px">Reliability: <span class="rul-flag ${flagClass}">${flagText}</span></div>`;
+
+  const headline = rangeMatch ? `${rangeMatch[1]}–${rangeMatch[2]}` : (medianMatch ? medianMatch[1] : "N/A");
+  const headlineUnit = headline === "N/A" ? "" : " yrs";
+  document.getElementById("metric-rul").innerHTML = `${headline}<small>${headlineUnit}</small>`;
+  document.getElementById("timeline-rul").textContent = headline === "N/A" ? "N/A" : headline + " yrs";
 }
 
 function renderResults(data) {
@@ -184,12 +195,17 @@ function renderResults(data) {
   document.getElementById("pred-10yr").textContent = data["10_year_prediction"] ?? "n/a";
   drawForecastChart(data.current_condition, data["5_year_prediction"], data["10_year_prediction"]);
 
+  document.getElementById("metric-current").innerHTML = `${data.current_condition ?? "--"}<small>/9</small>`;
+  document.getElementById("metric-5yr").innerHTML = `${data["5_year_prediction"] ?? "n/a"}<small>/9</small>`;
+  document.getElementById("metric-10yr").innerHTML = `${data["10_year_prediction"] ?? "n/a"}<small>/9</small>`;
+
   renderRUL(data.rul_estimate, data.rul_reliability_flag);
 
   const survivalPct = data.survival_10yr_probability * 100;
   document.getElementById("survival-ring").style.setProperty("--spct", 0);
   setTimeout(() => document.getElementById("survival-ring").style.setProperty("--spct", survivalPct), 30);
   animateNumber(document.getElementById("survival-value"), 0, survivalPct, 900, v => v.toFixed(1) + "%");
+  animateNumber(document.getElementById("metric-survival"), 0, survivalPct, 900, v => v.toFixed(1) + "%");
 
   const shapData = parseShapExplanation(data.shap_explanation);
   renderRiskBars(shapData);
@@ -207,14 +223,28 @@ function renderResults(data) {
   table.innerHTML = summaryRows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
 }
 
+const LOADING_PHASES = [
+  "Evaluating structural condition...",
+  "Forecasting deterioration...",
+  "Estimating remaining useful life...",
+];
+
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
   const btn = document.getElementById("analyze-btn");
   btn.disabled = true;
   document.getElementById("results").classList.add("hidden");
-  setStatus("loading", "Analyzing bridge -- running prediction pipeline...");
+  setStatus("loading", LOADING_PHASES[0]);
 
+  let phaseIdx = 0;
+  const phaseTimer = setInterval(() => {
+    phaseIdx = (phaseIdx + 1) % LOADING_PHASES.length;
+    const el = document.getElementById("loading-text");
+    if (el) el.textContent = LOADING_PHASES[phaseIdx];
+  }, 900);
+
+  const retry = () => handleSubmit(e);
   const payload = buildPayload(form);
 
   try {
@@ -226,11 +256,11 @@ async function handleSubmit(e) {
 
     if (res.status === 422) {
       const err = await res.json();
-      setStatus("error", "Invalid input: " + JSON.stringify(err.detail));
+      setStatus("error", "Invalid input: " + JSON.stringify(err.detail), retry);
       return;
     }
     if (!res.ok) {
-      setStatus("error", `Prediction failed (HTTP ${res.status}).`);
+      setStatus("error", `Prediction failed (HTTP ${res.status}).`, retry);
       return;
     }
 
@@ -239,8 +269,9 @@ async function handleSubmit(e) {
     renderResults(data);
     document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
-    setStatus("error", "Could not reach the BridgeGuard API. Is the server running? (" + err.message + ")");
+    setStatus("error", "Could not reach the BridgeGuard API. Is the server running? (" + err.message + ")", retry);
   } finally {
+    clearInterval(phaseTimer);
     btn.disabled = false;
   }
 }

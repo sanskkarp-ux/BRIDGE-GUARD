@@ -14,18 +14,29 @@
       <span class="brand-name">BRIDGEGUARD<span class="brand-ai">AI</span></span>
       <span class="tagline">Bridge Health &amp; Deterioration Intelligence</span>
     </div>
+    <nav class="navbar-nav" aria-label="Section navigation">
+      <a href="#analyze">Analyze</a>
+      <a href="#forecast">Forecast</a>
+      <a href="#risk">Risk</a>
+      <a href="#insights">Insights</a>
+    </nav>
     <div class="navbar-right">
-      <span class="status-pill"><span class="status-dot"></span>SYSTEM READY</span>
+      <span class="status-pill"><span class="status-dot"></span>SYSTEM ONLINE</span>
       <span class="badge">SYNTHETIC INDIA-INSPIRED PROTOTYPE</span>
     </div>
   </div>
 </header>
 
 <section class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-inner">
-    <p class="hero-eyebrow">AI-POWERED</p>
-    <h1 class="hero-title">BRIDGE HEALTH INTELLIGENCE</h1>
-    <p class="hero-sub">Predict condition. Forecast deterioration. Estimate remaining useful life.</p>
+    <h1 class="hero-title">BRIDGE HEALTH &amp;<br>DETERIORATION INTELLIGENCE</h1>
+    <p class="hero-sub">Predict bridge condition. Forecast deterioration. Estimate remaining useful life.</p>
+    <div class="hero-pills">
+      <span class="pill">AI-POWERED</span>
+      <span class="pill">PREDICTIVE ANALYTICS</span>
+      <span class="pill">SURVIVAL ANALYSIS</span>
+    </div>
     <a href="#analyze" class="hero-cta">ANALYZE BRIDGE <span aria-hidden="true">&rarr;</span></a>
   </div>
 </section>
@@ -36,7 +47,7 @@
     <form id="predict-form">
 
       <fieldset>
-        <legend><span class="legend-icon">&#128205;</span>Bridge Identity</legend>
+        <legend><span class="legend-num">01</span><span class="legend-icon">&#128205;</span>Bridge Identity</legend>
         <label>State
           <select name="state" required></select>
         </label>
@@ -49,7 +60,7 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="legend-icon">&#127959;&#65039;</span>Structural Profile</legend>
+        <legend><span class="legend-num">02</span><span class="legend-icon">&#127959;&#65039;</span>Structural Profile</legend>
         <label>Material
           <select name="material" required></select>
         </label>
@@ -61,6 +72,7 @@
         </label>
         <label>Bridge Age (years)
           <input type="number" name="bridge_age" value="25" min="0" max="150" required>
+          <small>Approximate age at inspection</small>
         </label>
         <label>Number of Spans
           <input type="number" name="num_spans" value="3" min="1" max="50" required>
@@ -80,9 +92,10 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="legend-icon">&#128663;</span>Traffic &amp; Load</legend>
+        <legend><span class="legend-num">03</span><span class="legend-icon">&#128663;</span>Traffic &amp; Load</legend>
         <label>Average Daily Traffic (ADT)
           <input type="number" name="adt" value="5000" min="0" max="200000" required>
+          <small>Vehicles per day</small>
         </label>
         <label>Heavy Vehicle Traffic (ADTT %)
           <input type="number" step="0.1" name="adtt_percent" value="12" min="0" max="100" required>
@@ -90,7 +103,7 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="legend-icon">&#127783;&#65039;</span>Environment</legend>
+        <legend><span class="legend-num">04</span><span class="legend-icon">&#127783;&#65039;</span>Environment</legend>
         <label>Exposure Condition
           <select name="exposure_condition" required></select>
         </label>
@@ -110,7 +123,7 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="legend-icon">&#128295;</span>Maintenance</legend>
+        <legend><span class="legend-num">05</span><span class="legend-icon">&#128295;</span>Maintenance</legend>
         <label class="checkbox">
           <input type="checkbox" name="ever_rehabilitated">
           Ever rehabilitated
@@ -153,11 +166,12 @@
   </section>
 
   <section class="results-panel">
-    <div id="status-area"></div>
+    <div id="status-area" aria-live="polite"></div>
 
     <div id="results" class="results hidden">
 
       <div class="card score-card reveal">
+        <div class="score-title">BRIDGEGUARD PROTOTYPE HEALTH SCORE</div>
         <div class="score-row">
           <div class="score-ring-wrap">
             <div class="score-ring" id="score-circle">
@@ -172,14 +186,40 @@
             <div class="confidence-badge" id="confidence-badge">--</div>
           </div>
         </div>
+        <div class="metrics-strip">
+          <div class="metric-tile">
+            <span class="metric-label">Current Condition</span>
+            <span class="metric-value" id="metric-current">--<small>/9</small></span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">5-Yr Forecast</span>
+            <span class="metric-value" id="metric-5yr">--<small>/9</small></span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">10-Yr Forecast</span>
+            <span class="metric-value" id="metric-10yr">--<small>/9</small></span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">10-Yr Survival</span>
+            <span class="metric-value" id="metric-survival">--</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-label">Remaining Useful Life</span>
+            <span class="metric-value" id="metric-rul">--</span>
+          </div>
+        </div>
       </div>
 
-      <div class="card reveal">
-        <h2>Condition Forecast</h2>
+      <div class="card reveal" id="forecast">
+        <h2>Deterioration Forecast</h2>
         <div class="forecast-numbers">
           <div><span class="label">Now</span><span class="value" id="current-condition">--</span></div>
+          <div class="timeline-arrow" aria-hidden="true">&rarr;</div>
           <div><span class="label">+5 Years</span><span class="value" id="pred-5yr">--</span></div>
+          <div class="timeline-arrow" aria-hidden="true">&rarr;</div>
           <div><span class="label">+10 Years</span><span class="value" id="pred-10yr">--</span></div>
+          <div class="timeline-arrow" aria-hidden="true">&rarr;</div>
+          <div><span class="label">RUL</span><span class="value" id="timeline-rul">--</span></div>
         </div>
         <svg id="forecast-chart" width="100%" height="170" viewBox="0 0 400 170" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
@@ -196,18 +236,18 @@
             <div class="survival-ring" id="survival-ring">
               <span id="survival-value">--</span>
             </div>
-            <p class="survival-caption">Probability this bridge has not yet reached the poor-condition threshold 10 years from now, per the Weibull-AFT survival model.</p>
+            <p class="survival-caption">Estimated probability of remaining above the project's poor-condition threshold over the next 10 years, per the Weibull-AFT survival model.</p>
           </div>
         </div>
       </div>
 
-      <div class="card reveal">
-        <h2>Risk Factors</h2>
+      <div class="card reveal" id="risk">
+        <h2>Risk Intelligence</h2>
         <div id="risk-bars"></div>
       </div>
 
-      <div class="card reveal">
-        <h2>Why This Prediction?</h2>
+      <div class="card reveal" id="insights">
+        <h2>Why Did BridgeGuard Give This Result?</h2>
         <div class="shap-columns">
           <div class="shap-col shap-up">
             <h3>&uarr; Risk Reducing</h3>
@@ -218,6 +258,10 @@
             <ul id="shap-down-list"></ul>
           </div>
         </div>
+        <details class="how-to-read">
+          <summary>How to read this <span class="chev">&#9662;</span></summary>
+          <p>These contributions come directly from SHAP (SHapley Additive exPlanations) values computed on the current-condition model. They describe how each input pushed <em>this model's</em> prediction up or down relative to its average output &mdash; they are a description of model behavior, not an engineering diagnosis of the bridge.</p>
+        </details>
       </div>
 
       <details class="card model-insights">
@@ -236,7 +280,9 @@
 
 <footer class="footer">
   <p class="footer-brand">BRIDGEGUARD AI</p>
+  <p class="footer-line">Bridge Health &amp; Deterioration Intelligence</p>
   <p class="footer-line">Prototype &bull; Synthetic Data &bull; Research Demonstration</p>
+  <p class="footer-stack">Python &middot; scikit-learn &middot; lifelines &middot; SHAP &middot; FastAPI &middot; Vanilla JS</p>
 </footer>
 
 <script src="/static/app.js"></script>
