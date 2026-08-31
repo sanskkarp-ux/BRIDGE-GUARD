@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
 <header class="navbar">
   <div class="navbar-inner">
     <div class="brand">
@@ -42,7 +44,7 @@
 </section>
 
 <main class="layout" id="analyze">
-  <section class="card input-panel">
+  <section class="card input-panel io-reveal">
     <h2>Bridge Details</h2>
     <form id="predict-form">
 
@@ -161,7 +163,10 @@
         </label>
       </fieldset>
 
-      <button type="submit" id="analyze-btn">ANALYZE BRIDGE</button>
+      <button type="submit" id="analyze-btn">
+        <span class="btn-label">ANALYZE BRIDGE</span>
+        <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+      </button>
     </form>
   </section>
 
@@ -170,10 +175,10 @@
 
     <div id="results" class="results hidden">
 
-      <div class="card score-card reveal">
+      <div class="card score-card io-reveal-scale">
         <div class="score-title">BRIDGEGUARD PROTOTYPE HEALTH SCORE</div>
         <div class="score-row">
-          <div class="score-ring-wrap">
+          <div class="score-ring-wrap" id="score-ring-wrap">
             <div class="score-ring" id="score-circle">
               <div class="score-ring-inner">
                 <span id="score-value">0</span>
@@ -210,7 +215,7 @@
         </div>
       </div>
 
-      <div class="card reveal" id="forecast">
+      <div class="card io-reveal" id="forecast">
         <h2>Deterioration Forecast</h2>
         <div class="forecast-numbers">
           <div><span class="label">Now</span><span class="value" id="current-condition">--</span></div>
@@ -225,12 +230,12 @@
       </div>
 
       <div class="card-grid">
-        <div class="card reveal">
+        <div class="card io-reveal-left" id="rul-card">
           <h2>Remaining Useful Life</h2>
           <div id="rul-content"></div>
         </div>
 
-        <div class="card reveal">
+        <div class="card io-reveal-right" id="survival-card">
           <h2>10-Year Survival Probability</h2>
           <div class="survival-row">
             <div class="survival-ring" id="survival-ring">
@@ -241,12 +246,12 @@
         </div>
       </div>
 
-      <div class="card reveal" id="risk">
+      <div class="card io-reveal" id="risk">
         <h2>Risk Intelligence</h2>
         <div id="risk-bars"></div>
       </div>
 
-      <div class="card reveal" id="insights">
+      <div class="card io-reveal" id="insights">
         <h2>Why Did BridgeGuard Give This Result?</h2>
         <div class="shap-columns">
           <div class="shap-col shap-up">
@@ -264,7 +269,7 @@
         </details>
       </div>
 
-      <details class="card model-insights">
+      <details class="card model-insights io-reveal">
         <summary>MODEL INSIGHTS <span class="chev">&#9662;</span></summary>
         <table id="model-summary-table"></table>
       </details>
@@ -278,12 +283,14 @@
   <p>Not a certified structural safety rating and does not replace professional bridge inspection.</p>
 </div>
 
-<footer class="footer">
+<footer class="footer io-reveal">
   <p class="footer-brand">BRIDGEGUARD AI</p>
   <p class="footer-line">Bridge Health &amp; Deterioration Intelligence</p>
   <p class="footer-line">Prototype &bull; Synthetic Data &bull; Research Demonstration</p>
   <p class="footer-stack">Python &middot; scikit-learn &middot; lifelines &middot; SHAP &middot; FastAPI &middot; Vanilla JS</p>
 </footer>
+
+<button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top">&uarr;</button>
 
 <script src="/static/app.js"></script>
 </body>
