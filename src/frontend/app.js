@@ -15,7 +15,7 @@ const OPTIONS = {
 // endpoint exists) -- kept in sync manually, documented in docs/frontend.md.
 
 const CATEGORY_COLOR = {
-  Excellent: "#2f8f5b", Good: "#5a9d4a", Fair: "#d9a441", Poor: "#d9642a", Critical: "#c1392b",
+  Excellent: "#34d399", Good: "#4ade80", Fair: "#fbbf24", Poor: "#fb923c", Critical: "#f87171",
 };
 
 function populateSelects() {
@@ -136,14 +136,14 @@ function drawForecastChart(current, y5, y10) {
     const x = padL + i * xStep;
     const y = yScale(p[1]);
     path += (i === 0 ? "M" : "L") + x + "," + y + " ";
-    dots += `<circle cx="${x}" cy="${y}" r="5" fill="#d9642a" stroke="#fff" stroke-width="2"><title>${p[0]}: ${p[1]} / 9</title></circle>`;
-    labels += `<text x="${x}" y="${H - 12}" font-size="11" text-anchor="middle" fill="#6b655c">${p[0]}</text>`;
-    labels += `<text x="${x}" y="${y - 12}" font-size="13" text-anchor="middle" fill="#24211d" font-weight="800">${p[1]}</text>`;
+    dots += `<circle cx="${x}" cy="${y}" r="5" fill="#f97316" stroke="#141b28" stroke-width="2"><title>${p[0]}: ${p[1]} / 9</title></circle>`;
+    labels += `<text x="${x}" y="${H - 12}" font-size="11" text-anchor="middle" fill="#9aa3b5">${p[0]}</text>`;
+    labels += `<text x="${x}" y="${y - 12}" font-size="13" text-anchor="middle" fill="#f3ede2" font-weight="800">${p[1]}</text>`;
   });
 
   svg.innerHTML = `
-    <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="#ece5d8"/>
-    <path class="chart-line" d="${path}" fill="none" stroke="#d9a441" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="rgba(245,158,11,0.22)"/>
+    <path class="chart-line" d="${path}" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     ${dots}${labels}
   `;
 }
@@ -298,6 +298,23 @@ const LOADING_PHASES = [
   "Estimating remaining useful life...",
 ];
 
+// Called only after the API response has actually arrived -- each row is
+// checked off because that piece of data is genuinely present in `data`,
+// never as a fabricated progress indicator.
+const AI_STAGES = ["STRUCTURAL PROFILE", "CONDITION MODEL", "DETERIORATION FORECAST", "SURVIVAL MODEL", "RISK ANALYSIS"];
+
+function showAiChecklist(area) {
+  return new Promise(resolve => {
+    area.innerHTML = `<div class="status-msg status-checklist"><div class="ai-checklist">${
+      AI_STAGES.map(s => `<div class="ai-check-row"><span class="ai-check-dot"></span>${s}</div>`).join("")
+    }</div></div>`;
+    const rows = area.querySelectorAll(".ai-check-row");
+    if (prefersReducedMotion()) { rows.forEach(r => r.classList.add("done")); resolve(); return; }
+    rows.forEach((r, i) => setTimeout(() => r.classList.add("done"), i * 90));
+    setTimeout(resolve, rows.length * 90 + 180);
+  });
+}
+
 async function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
@@ -337,6 +354,8 @@ async function handleSubmit(e) {
     }
 
     const data = await res.json();
+    clearInterval(phaseTimer);
+    await showAiChecklist(document.getElementById("status-area"));
     setStatus(null);
     renderResults(data);
   } catch (err) {
@@ -401,12 +420,20 @@ function initBackToTop() {
   });
 }
 
-function initHeroParallax() {
-  const bg = document.querySelector(".hero-bg");
-  if (!bg || prefersReducedMotion() || window.innerWidth < 760) return;
+function initBgParallax() {
+  if (prefersReducedMotion() || window.innerWidth < 760) return;
+  const grid = document.querySelector(".bg-grid");
+  const dots = document.querySelector(".bg-dots");
+  const glow1 = document.querySelector(".bg-glow-1");
+  const glow2 = document.querySelector(".bg-glow-2");
+  if (!grid) return;
   let ticking = false;
   function update() {
-    bg.style.transform = `translateY(${Math.min(window.scrollY * 0.15, 60)}px)`;
+    const y = window.scrollY;
+    grid.style.transform = `translateY(${Math.min(y * 0.06, 90)}px)`;
+    if (dots) dots.style.transform = `translateY(${Math.min(y * 0.03, 50)}px)`;
+    if (glow1) glow1.style.transform = `translateY(${Math.min(y * 0.1, 140)}px)`;
+    if (glow2) glow2.style.transform = `translateY(${-Math.min(y * 0.08, 120)}px)`;
     ticking = false;
   }
   window.addEventListener("scroll", () => {
@@ -443,5 +470,5 @@ initScrollProgress();
 initNavbarScrollState();
 initActiveNav();
 initBackToTop();
-initHeroParallax();
+initBgParallax();
 initScrollReveal();

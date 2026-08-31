@@ -8,6 +8,14 @@
 </head>
 <body>
 
+<div class="bg-fx" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-dots"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+</div>
+
 <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
 <header class="navbar">
@@ -30,9 +38,12 @@
 </header>
 
 <section class="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
+  <span class="float-badge" style="top:18%; left:6%; animation-delay:0s;" aria-hidden="true">AI MODEL</span>
+  <span class="float-badge" style="top:22%; right:6%; animation-delay:1.5s;" aria-hidden="true">SHAP</span>
+  <span class="float-badge" style="bottom:10%; left:12%; animation-delay:3s;" aria-hidden="true">RUL</span>
   <div class="hero-inner">
-    <h1 class="hero-title">BRIDGE HEALTH &amp;<br>DETERIORATION INTELLIGENCE</h1>
+    <p class="hero-eyebrow">AI-POWERED BRIDGE INTELLIGENCE</p>
+    <h1 class="hero-title">BRIDGE HEALTH &amp;<br>DETERIORATION <span class="accent-text">INTELLIGENCE</span></h1>
     <p class="hero-sub">Predict bridge condition. Forecast deterioration. Estimate remaining useful life.</p>
     <div class="hero-pills">
       <span class="pill">AI-POWERED</span>
@@ -44,7 +55,7 @@
 </section>
 
 <main class="layout" id="analyze">
-  <section class="card input-panel io-reveal">
+  <section class="card input-panel light-card io-reveal">
     <h2>Bridge Details</h2>
     <form id="predict-form">
 
@@ -230,12 +241,12 @@
       </div>
 
       <div class="card-grid">
-        <div class="card io-reveal-left" id="rul-card">
+        <div class="card light-card io-reveal-left" id="rul-card">
           <h2>Remaining Useful Life</h2>
           <div id="rul-content"></div>
         </div>
 
-        <div class="card io-reveal-right" id="survival-card">
+        <div class="card light-card io-reveal-right" id="survival-card">
           <h2>10-Year Survival Probability</h2>
           <div class="survival-row">
             <div class="survival-ring" id="survival-ring">
@@ -246,7 +257,7 @@
         </div>
       </div>
 
-      <div class="card io-reveal" id="risk">
+      <div class="card light-card io-reveal" id="risk">
         <h2>Risk Intelligence</h2>
         <div id="risk-bars"></div>
       </div>
@@ -269,7 +280,7 @@
         </details>
       </div>
 
-      <details class="card model-insights io-reveal">
+      <details class="card light-card model-insights io-reveal">
         <summary>MODEL INSIGHTS <span class="chev">&#9662;</span></summary>
         <table id="model-summary-table"></table>
       </details>
